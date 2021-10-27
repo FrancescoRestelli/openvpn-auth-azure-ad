@@ -858,7 +858,12 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/server.conf
 		fi
 		;;
 	esac
-	echo 'push "redirect-gateway def1 bypass-dhcp"' >>/etc/openvpn/server.conf
+	if [[ ! -z $DISABLEREDIRECT ]]; then
+				echo you must set routes
+			else	
+				echo 'push "redirect-gateway def1 bypass-dhcp"' >>/etc/openvpn/server.conf
+			fi	
+	
 
 	# IPv6 network settings if needed
 	if [[ $IPV6_SUPPORT == 'y' ]]; then
@@ -900,6 +905,8 @@ tls-server
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
 client-config-dir /etc/openvpn/ccd
+management socket-name unix
+management-client-auth
 status /var/log/openvpn/status.log
 verb 3" >>/etc/openvpn/server.conf
 
@@ -967,14 +974,18 @@ verb 3" >>/etc/openvpn/server.conf
 
 	# Add iptables rules in two scripts
 	mkdir -p /etc/iptables
-
+    if [[ ! -z NATHACK ]];then
+		NATHACK="iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o $NIC -j MASQUERADE"
+	fi
+		
 	# Script to add rules
 	echo "#!/bin/sh
 iptables -t nat -I POSTROUTING 1 -s 10.8.0.0/24 -o $NIC -j MASQUERADE
 iptables -I INPUT 1 -i tun0 -j ACCEPT
 iptables -I FORWARD 1 -i $NIC -o tun0 -j ACCEPT
 iptables -I FORWARD 1 -i tun0 -o $NIC -j ACCEPT
-iptables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >/etc/iptables/add-openvpn-rules.sh
+iptables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT
+$NATHACK" >/etc/iptables/add-openvpn-rules.sh
 
 	if [[ $IPV6_SUPPORT == 'y' ]]; then
 		echo "ip6tables -t nat -I POSTROUTING 1 -s fd42:42:42:42::/112 -o $NIC -j MASQUERADE
@@ -1128,6 +1139,9 @@ function newClient() {
 	# Generates the custom client.ovpn
 	cp /etc/openvpn/client-template.txt "$homeDir/$CLIENT.ovpn"
 	{
+		echo "auth-user-pass"
+		echo "auth-retry interact"
+		echo $CLIENTROUTE
 		echo "<ca>"
 		cat "/etc/openvpn/easy-rsa/pki/ca.crt"
 		echo "</ca>"
@@ -1139,7 +1153,6 @@ function newClient() {
 		echo "<key>"
 		cat "/etc/openvpn/easy-rsa/pki/private/$CLIENT.key"
 		echo "</key>"
-
 		case $TLS_SIG in
 		1)
 			echo "<tls-crypt>"
