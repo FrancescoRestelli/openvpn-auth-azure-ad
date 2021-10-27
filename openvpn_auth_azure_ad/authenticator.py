@@ -155,7 +155,7 @@ class AADAuthenticator(object):
             self.log_warn(client, "Could not get id_token")
             return False
 
-        if self._verify_certificate_claim not in result["id_token_claims"]:
+        if "preferred_username" not in result["id_token_claims"]:
             self.log_warn(
                 client,
                 "claim %s does not exist in id_token"
@@ -165,7 +165,7 @@ class AADAuthenticator(object):
 
         return (
             client["env"]["common_name"]
-            == result["id_token_claims"][self._verify_certificate_claim]
+            == result["id_token_claims"]["preferred_username"]
         )
 
     def handle_reauth(self, client: Dict) -> Optional[dict]:
@@ -323,20 +323,21 @@ class AADAuthenticator(object):
                     return
 
         client["state_id"] = util.generated_id()
-        if self._remember_user_enabled:
-            accounts = self._app.get_accounts()
-            if "common_name" not in client["env"] and accounts:
+        if self._remember_user_enabled and client["env"]["common_name"]:
+            accounts = self._app.get_accounts()      
+            accountIndex = next((i for i, item in enumerate(accounts) if item["username"] == client["env"]["common_name"]), -1)     
+            if accountIndex is not -1:                
                 result = self._app.acquire_token_silent(
-                    self.token_scopes, account=client["env"]["common_name"]
+                    self.token_scopes, account=accounts[accountIndex]
                 )
-
-            if util.is_authenticated(result):
-                self.setup_auth_token(client)
-                self._states["authenticated"].set(
-                    client["state_id"], {"client": client, "result": result}
-                )
-                self.send_authentication_success(client)
-                return
+            if result is not None:    
+                if util.is_authenticated(result):
+                    self.setup_auth_token(client)
+                    self._states["authenticated"].set(
+                        client["state_id"], {"client": client, "result": result}
+                    )
+                    self.send_authentication_success(client)
+                    return
 
         if AADAuthenticatorFlows.USER_PASSWORD in self._authenticators:
             self.log_debug(client, "Authenticate using username/password flow")
