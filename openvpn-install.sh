@@ -905,7 +905,7 @@ tls-server
 tls-version-min 1.2
 tls-cipher $CC_CIPHER
 client-config-dir /etc/openvpn/ccd
-management socket-name unix
+management /dev/openvpn unix
 management-client-auth
 status /var/log/openvpn/status.log
 verb 3" >>/etc/openvpn/server.conf
@@ -977,7 +977,7 @@ verb 3" >>/etc/openvpn/server.conf
     if [[ ! -z NATHACK ]];then
 		NATHACK="iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o $NIC -j MASQUERADE"
 	fi
-		
+
 	# Script to add rules
 	echo "#!/bin/sh
 iptables -t nat -I POSTROUTING 1 -s 10.8.0.0/24 -o $NIC -j MASQUERADE

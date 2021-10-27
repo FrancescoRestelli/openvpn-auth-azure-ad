@@ -1,0 +1,16 @@
+[Unit]
+Description=azurevpn
+After=openvpn.service
+Wants=network-online.target systemd-networkd-wait-online.service openvpn.service
+
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+
+ExecStart=/usr/local/openvpn-auth-azure-ad/run_aad_vpn.sh
+
+[Install]
+WantedBy=multi-user.target
