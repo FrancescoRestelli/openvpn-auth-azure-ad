@@ -662,7 +662,7 @@ function installOpenVPN() {
 	if [[ ! -e /etc/openvpn/server.conf ]]; then
 		if [[ $OS =~ (debian|ubuntu) ]]; then
 			apt-get update
-			apt-get -y install ca-certificates gnupg
+			apt-get -y install ca-certificates gnupg iptables openssl wget ca-certificates curl
 			# We add the OpenVPN repo to get the latest version.
 			if [[ $VERSION_ID == "16.04" ]]; then
 				echo "deb http://build.openvpn.net/debian/openvpn/stable xenial main" >/etc/apt/sources.list.d/openvpn.list
@@ -670,7 +670,11 @@ function installOpenVPN() {
 				apt-get update
 			fi
 			# Ubuntu > 16.04 and Debian > 8 have OpenVPN >= 2.4 without the need of a third party repository.
-			apt-get install -y openvpn iptables openssl wget ca-certificates curl
+			if [[ ! -z $OPENVPNDEB ]]; then
+				dpkg -i $OPENVPNDEB
+			else	
+				apt-get install -y openvpn
+			fi	
 		elif [[ $OS == 'centos' ]]; then
 			yum install -y epel-release
 			yum install -y openvpn iptables openssl wget ca-certificates curl tar 'policycoreutils-python*'
