@@ -802,6 +802,8 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/server.conf
 			# Copy, if it's a IPv4 |or| if IPv6 is enabled, IPv4/IPv6 does not matter
 			if [[ $line =~ ^[0-9.]*$ ]] || [[ $IPV6_SUPPORT == 'y' ]]; then
 				echo "push \"dhcp-option DNS $line\"" >>/etc/openvpn/server.conf
+                                echo "push \"route $line 255.255.255.255\"" >>/etc/openvpn/server.conf
+                                
 			fi
 		done
 		;;
