@@ -911,6 +911,7 @@ management /dev/openvpn unix
 management-client-auth
 status /var/log/openvpn/status.log
 verb 3" >>/etc/openvpn/server.conf
+echo -e $CLIENTROUTE >>/etc/openvpn/server.conf
 
 	# Create client-config-dir dir
 	mkdir -p /etc/openvpn/ccd
@@ -1143,7 +1144,6 @@ function newClient() {
 	{
 		echo "auth-user-pass"
 		echo "auth-retry interact"
-		echo $CLIENTROUTE
 		echo "<ca>"
 		cat "/etc/openvpn/easy-rsa/pki/ca.crt"
 		echo "</ca>"
