@@ -1,3 +1,4 @@
+#!/bin/bash
 IP=$(ifconfig eth0 |grep -v inet6|grep inet|awk '{ print $2 }')
 MASK=$(ifconfig eth0 |grep -v inet6|grep inet|awk '{ print $4 }')
 export AUTO_INSTALL=y 
