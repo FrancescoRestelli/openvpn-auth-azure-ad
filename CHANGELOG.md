@@ -7,9 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update msal to 1.18
+
+## [2.0.1]
+
 ### Added
 
+- Automatic docker build in CI
+
+## [2.0.0]
+
+### Added
+
+- Support management-hold
+- Added `--verify-openvpn-client-id-token-claim`
+- Better handling in reconnection scenarios
+- Better logging
+
 ### Changed
+
+- Change `--verify-common-name` to `--verify-openvpn-client`
+- Refactor project to PEP-517 standard
 
 ### Removed
 
@@ -76,7 +96,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release
 
-[unreleased]: https://github.com/jkroepke/openvpn-auth-azure-ad/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/jkroepke/openvpn-auth-azure-ad/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/jkroepke/openvpn-auth-azure-ad/releases/tag/v2.0.1
+[2.0.0]: https://github.com/jkroepke/openvpn-auth-azure-ad/releases/tag/v2.0.0
 [1.2.0]: https://github.com/jkroepke/openvpn-auth-azure-ad/releases/tag/v1.2.0
 [1.1.3]: https://github.com/jkroepke/openvpn-auth-azure-ad/releases/tag/v1.1.3
 [1.1.2]: https://github.com/jkroepke/openvpn-auth-azure-ad/releases/tag/v1.1.2

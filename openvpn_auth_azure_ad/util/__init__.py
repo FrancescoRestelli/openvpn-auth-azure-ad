@@ -9,7 +9,7 @@ def b64encode_string(s: str) -> str:
 
 
 def is_authenticated(result: dict) -> bool:
-    return "access_token" in result
+    return result is not None and "access_token" in result
 
 
 def generated_id() -> str:
@@ -40,4 +40,4 @@ def get_auth_token(client: dict) -> Optional[str]:
 
 def format_client_challenge(client: dict, challenge) -> str:
     username_b64 = b64encode_string(client["env"]["username"])
-    return "CRV1:E,R:%s:%s:%s" % (client["state_id"], username_b64, challenge)
+    return "CRV1:R,E:%s:%s:%s" % (client["state_id"], username_b64, challenge)
