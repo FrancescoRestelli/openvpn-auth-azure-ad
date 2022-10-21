@@ -1,11 +1,11 @@
-FROM python:3.8
+FROM python:3.10
 
 WORKDIR /opt/
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN --mount=source=.git,target=.git,type=bind pip install --no-cache-dir -e .
 
-USER 1001
+USER 65534
 
 CMD ["openvpn-auth-azure-ad"]
