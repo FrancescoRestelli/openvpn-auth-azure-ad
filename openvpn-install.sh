@@ -629,7 +629,7 @@ function installOpenVPN() {
 		if [[ $IPV6_SUPPORT == "y" ]]; then
 			PUBLIC_IP=$(curl https://ifconfig.co)
 		else
-			PUBLIC_IP=$(curl -4 https://ifconfig.co)
+			PUBLIC_IP=$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance?api-version=2021-02-01" | jq -r '.network.interface[0].ipv4.ipAddress[0].publicIpAddress')
 		fi
 		ENDPOINT=${ENDPOINT:-$PUBLIC_IP}
 	fi
