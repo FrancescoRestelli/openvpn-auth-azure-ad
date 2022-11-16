@@ -10,7 +10,7 @@ StartLimitBurst=5
 Restart=on-failure
 RestartSec=5s
 
-ExecStart=/usr/local/openvpn-auth-azure-ad/run_aad_vpn.sh
+ExecStart=/usr/local/src/openvpn-auth-azure-ad/run_aad_vpn.sh
 
 [Install]
 WantedBy=multi-user.target
